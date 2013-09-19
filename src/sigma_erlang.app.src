@@ -1,0 +1,11 @@
+{application, sigma_erlang,
+ [
+  {description, "A collection of semi-unrelated utilities"},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {env, []}
+ ]}.
