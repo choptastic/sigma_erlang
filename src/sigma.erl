@@ -109,7 +109,7 @@ sanitize_cmdline_arg([$| | R]) -> "\\|" ++ sanitize_cmdline_arg(R);
 sanitize_cmdline_arg([$\\ | R]) -> "\\\\" ++ sanitize_cmdline_arg(R);
 sanitize_cmdline_arg([$" | R]) -> "\\\"" ++ sanitize_cmdline_arg(R);
 sanitize_cmdline_arg([10 | R]) -> "\\n" ++ sanitize_cmdline_arg(R);
-sanitize_cmdline_arg([C | R]) -> C ++ sanitize_cmdline_arg(R).
+sanitize_cmdline_arg([C | R]) -> [C | sanitize_cmdline_arg(R)].
 
 undef_is(V,U) ->
 	case V of
