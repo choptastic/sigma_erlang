@@ -123,6 +123,8 @@ undef_is_zero(V) ->
 log2(N) ->
 	math:log(N)/math:log(2).
 
+log(Msg, Params) ->
+	io:format("~p:~s~n",[self(),io_lib:format(Msg, Params)]).
 
 log(Msg) ->
 	io:format("~p:~p~n",[self(),Msg]),
