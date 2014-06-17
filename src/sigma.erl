@@ -542,3 +542,18 @@ base24_ctoi($W) -> 20;
 base24_ctoi($X) -> 21;
 base24_ctoi($Y) -> 22;
 base24_ctoi($Z) -> 23.
+
+number_suffix(N) when is_integer(N) ->
+	case N of
+		N when N rem 100 =:= 11 -> "th";
+		N when N rem 100 =:= 12 -> "th";
+		N when N rem 100 =:= 13 -> "th";
+		N when N rem 10 =:= 1 -> "st";
+		N when N rem 10 =:= 2 -> "nd";
+		N when N rem 10 =:= 3 -> "rd";
+		_ -> "th"
+	end.
+
+suffixize_number(N) when is_integer(N)->
+	integer_to_list(N) ++ number_suffix(N).
+
