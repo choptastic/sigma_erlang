@@ -291,6 +291,14 @@ nfoldl(Fun, Init, List) when is_function(Fun,3) ->
 		Fun(N, V, Acc)
 	end, Init, lists:zip(lists:seq(1,Len),List)).
 
+safe_to_integer(S) when is_integer(S) -> S;
+safe_to_integer(S) when is_float(S) -> round(S);
+safe_to_integer(S) when is_list(S) ->
+	try wf:to_integer(S) of
+		Int -> Int
+	catch _:_ -> 0
+	end.
+
 safe_to_float(S) when is_integer(S) ->
 	S + 0.0;
 safe_to_float(S) when is_float(S) ->
