@@ -101,6 +101,15 @@ deep_unbinary(Var) ->
 butlast(List) ->
 	lists:sublist(List,length(List)-1).
 
+sanitize_cmdline_arg([]) -> [];
+sanitize_cmdline_arg([$' | R]) -> "\\'" ++ sanitize_cmdline_arg(R);
+sanitize_cmdline_arg([32 | R]) -> "\\ " ++ sanitize_cmdline_arg(R);
+sanitize_cmdline_arg([9 | R]) -> "\\t" ++ sanitize_cmdline_arg(R);
+sanitize_cmdline_arg([$| | R]) -> "\\|" ++ sanitize_cmdline_arg(R);
+sanitize_cmdline_arg([$\\ | R]) -> "\\\\" ++ sanitize_cmdline_arg(R);
+sanitize_cmdline_arg([$" | R]) -> "\\\"" ++ sanitize_cmdline_arg(R);
+sanitize_cmdline_arg([10 | R]) -> "\\n" ++ sanitize_cmdline_arg(R);
+sanitize_cmdline_arg([C | R]) -> [C | sanitize_cmdline_arg(R)].
 
 undef_is(V,U) ->
 	case V of
@@ -114,6 +123,8 @@ undef_is_zero(V) ->
 log2(N) ->
 	math:log(N)/math:log(2).
 
+log(Msg, Params) ->
+	io:format("~p:~s~n",[self(),io_lib:format(Msg, Params)]).
 
 log(Msg) ->
 	io:format("~p:~p~n",[self(),Msg]),
@@ -539,3 +550,18 @@ base24_ctoi($W) -> 20;
 base24_ctoi($X) -> 21;
 base24_ctoi($Y) -> 22;
 base24_ctoi($Z) -> 23.
+
+number_suffix(N) when is_integer(N) ->
+	case N of
+		N when N rem 100 =:= 11 -> "th";
+		N when N rem 100 =:= 12 -> "th";
+		N when N rem 100 =:= 13 -> "th";
+		N when N rem 10 =:= 1 -> "st";
+		N when N rem 10 =:= 2 -> "nd";
+		N when N rem 10 =:= 3 -> "rd";
+		_ -> "th"
+	end.
+
+suffixize_number(N) when is_integer(N)->
+	integer_to_list(N) ++ number_suffix(N).
+
