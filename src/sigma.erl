@@ -565,3 +565,9 @@ number_suffix(N) when is_integer(N) ->
 suffixize_number(N) when is_integer(N)->
 	integer_to_list(N) ++ number_suffix(N).
 
+delete_all(_, []) -> [];
+delete_all(Value, [Value|T]) ->
+	delete_all(Value, T);
+delete_all(Value, [H|T]) ->
+	[H | delete_all(Value, T)].
+
