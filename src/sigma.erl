@@ -571,3 +571,10 @@ delete_all(Value, [Value|T]) ->
 delete_all(Value, [H|T]) ->
 	[H | delete_all(Value, T)].
 
+safe_binary_to_term(B, Default) ->
+	try binary_to_term(B)
+	catch _:_ -> Default
+	end.
+
+safe_binary_to_term(B) ->
+	safe_binary_to_term(B, undefined).
