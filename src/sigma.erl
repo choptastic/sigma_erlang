@@ -466,6 +466,17 @@ get_index(Val, [Val | _Rest], N) ->
 get_index(Val, [_ | Rest], N) ->
 	get_index(Val, Rest, N+1).
 
+get_index_pred(Pred, List) ->
+	get_index_pred(Pred, List, 1).
+
+get_index_pred(_, [], _) ->
+	undefined;
+get_index_pred(Pred, [H|T], N) ->
+	case Pred(H) of
+		true -> {ok, N};
+		false -> get_index_pred(Pred, T, N+1)
+	end.
+
 %% TODO: Break base24 ibnto it's own app
 
 %% for user-readable invoice generation stuff. Excludes I and 0 for 
