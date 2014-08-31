@@ -302,6 +302,14 @@ nfoldl(Fun, Init, List) when is_function(Fun,3) ->
 		Fun(N, V, Acc)
 	end, Init, lists:zip(lists:seq(1,Len),List)).
 
+safe_to_integer(S) when is_integer(S) -> S;
+safe_to_integer(S) when is_float(S) -> round(S);
+safe_to_integer(S) when is_list(S) ->
+	try wf:to_integer(S) of
+		Int -> Int
+	catch _:_ -> 0
+	end.
+
 safe_to_float(S) when is_integer(S) ->
 	S + 0.0;
 safe_to_float(S) when is_float(S) ->
@@ -553,3 +561,31 @@ base24_ctoi($W) -> 20;
 base24_ctoi($X) -> 21;
 base24_ctoi($Y) -> 22;
 base24_ctoi($Z) -> 23.
+
+number_suffix(N) when is_integer(N) ->
+	case N of
+		N when N rem 100 =:= 11 -> "th";
+		N when N rem 100 =:= 12 -> "th";
+		N when N rem 100 =:= 13 -> "th";
+		N when N rem 10 =:= 1 -> "st";
+		N when N rem 10 =:= 2 -> "nd";
+		N when N rem 10 =:= 3 -> "rd";
+		_ -> "th"
+	end.
+
+suffixize_number(N) when is_integer(N)->
+	integer_to_list(N) ++ number_suffix(N).
+
+delete_all(_, []) -> [];
+delete_all(Value, [Value|T]) ->
+	delete_all(Value, T);
+delete_all(Value, [H|T]) ->
+	[H | delete_all(Value, T)].
+
+safe_binary_to_term(B, Default) ->
+	try binary_to_term(B)
+	catch _:_ -> Default
+	end.
+
+safe_binary_to_term(B) ->
+	safe_binary_to_term(B, undefined).
