@@ -280,6 +280,11 @@ anyany([H|T],L2) ->
 		false -> anyany(T,L2)
 	end.
 
+range(Start, End, List) ->
+	{_, Remainder} = lists:split(Start - 1, List),
+	{Target, _} = lists:split(End - Start + 1, Remainder),
+	Target.
+
 safe_nth(Num,List,Default) when Num > length(List) ->
 	Default;
 safe_nth(Num,List,_Default) ->
@@ -351,7 +356,17 @@ pivot(List) ->
 	end,List),
 	zipn(Extended).
 
-	
+deduplicate(List) ->
+	deduplicate(List, 0).
+
+deduplicate([undefined | T], Last) ->
+	deduplicate(T, Last);
+deduplicate([LastPlace | T], LastPlace) ->
+	deduplicate(T, LastPlace);
+deduplicate([ThisPlace | T], _) ->
+	[ThisPlace | deduplicate(T, ThisPlace)];
+deduplicate([], _) ->
+	[].
 
 break_into_parts_helper(List,PartLen) ->
 	Start = lists:sublist(List,PartLen),
