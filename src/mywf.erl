@@ -183,6 +183,10 @@ strip_leading_whitespace([WS | T]) when WS==10; WS==13; WS==32; WS==9 ->
 strip_leading_whitespace(Text) ->
 	Text.
 
+q_maps(KeyList) ->
+    PLs = q_pls(KeyList),
+    [maps:from_list(PL) || PL <- PLs].
+
 q_pls(KeyList) ->
 	Initial = wf:mqs(KeyList),
 	Pivoted = sigma:pivot(Initial),
