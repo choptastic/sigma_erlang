@@ -604,3 +604,6 @@ safe_binary_to_term(B, Default) ->
 
 safe_binary_to_term(B) ->
 	safe_binary_to_term(B, undefined).
+
+levenshtein(A, B) ->
+    string_metrics:levenshtein(string:to_lower(wf:to_list(A)),string:to_lower(wf:to_list(B))).
