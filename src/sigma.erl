@@ -49,6 +49,20 @@ random_list_item(L) ->
 	Index = random(1,length(L)),
 	lists:nth(Index,L).
 
+random_sample(List, SampleSize) when SampleSize >= length(List) ->
+	List;
+random_sample(List, SampleSize) ->
+	random_sample(List, SampleSize, []).
+
+random_sample(_List, 0, Acc) ->
+	Acc;
+random_sample(List, SampleSize, Acc) ->
+	NewItem = random_list_item(List),
+	case lists:member(NewItem, Acc) of
+		true ->	random_sample(List, SampleSize, Acc);
+		false -> random_sample(List, SampleSize - 1, [NewItem | Acc])
+	end.
+	
 
 re(Subject,RE) ->
 	re:run(Subject,RE,[{capture,all_but_first,list}]).
