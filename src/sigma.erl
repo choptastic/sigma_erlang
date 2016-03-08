@@ -164,11 +164,11 @@ do_f(Parent, F, I) ->
 	Parent ! {self(), (catch F(I))}. 
 
 unixtime() ->
-	{MegaSec,Sec,_Micro} = now(),
+	{MegaSec,Sec,_Micro} = os:timestamp(),
 	MegaSec*1000000 + Sec.
 
 unixtime_micro() ->
-	{MegaSec,Sec,MicroSec} = now(),
+	{MegaSec,Sec,MicroSec} = os:timestamp(),
 	MegaSec*1000000 + Sec + MicroSec/1000000.
 
 unixtime_to_date(T) ->
