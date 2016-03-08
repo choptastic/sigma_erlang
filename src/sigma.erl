@@ -621,3 +621,9 @@ safe_binary_to_term(B) ->
 
 levenshtein(A, B) ->
     string_metrics:levenshtein(string:to_lower(wf:to_list(A)),string:to_lower(wf:to_list(B))).
+
+sort_levenshtein(Base, Strings) ->
+    Distances = [{levenshtein(Base, S), S} || S <- Strings],
+    Sorted = lists:sort(fun({D1,_}, {D2,_}) -> D1 =< D2 end, Distances),
+    [S || {_, S} <- Sorted].
+
