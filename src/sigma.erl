@@ -632,3 +632,6 @@ boolize("1") -> true;
 boolize(true) -> true;
 boolize("on") -> true;
 boolize(_) -> false.
+
+unboolize(true) -> 1;
+unboolize(false) -> 0.
