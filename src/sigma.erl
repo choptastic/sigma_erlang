@@ -627,3 +627,8 @@ sort_levenshtein(Base, Strings) ->
     Sorted = lists:sort(fun({D1,_}, {D2,_}) -> D1 =< D2 end, Distances),
     [S || {_, S} <- Sorted].
 
+boolize(1) -> true;
+boolize("1") -> true;
+boolize(true) -> true;
+boolize("on") -> true;
+boolize(_) -> false.
