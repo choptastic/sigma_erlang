@@ -634,4 +634,5 @@ boolize("on") -> true;
 boolize(_) -> false.
 
 unboolize(true) -> 1;
-unboolize(false) -> 0.
+unboolize(false) -> 0;
+unboolize(Other) -> unboolize(boolize(Other)).
