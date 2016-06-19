@@ -281,8 +281,8 @@ ceiling(X) ->
 trim(undefined) ->
 	"";
 trim(X) -> 
-	X1 = re:replace(X,"^[\r\n\s]+","",[{return,list}]),
-	re:replace(X1,"[\r\n\s]+$","",[{return,list}]).
+	X1 = re:replace(X,"^[\r\n\s]+","",[{return,binary}, unicode]),
+	re:replace(X1,"[\r\n\s]+$","",[{return,list}, unicode]).
 
 strip_left(Char, [Char | Rest]) ->
     strip_left(Char, Rest);
