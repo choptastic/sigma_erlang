@@ -284,6 +284,17 @@ trim(X) ->
 	X1 = re:replace(X,"^[\r\n\s]+","",[{return,list}]),
 	re:replace(X1,"[\r\n\s]+$","",[{return,list}]).
 
+strip_left(Char, [Char | Rest]) ->
+    strip_left(Char, Rest);
+strip_left(_Char, List) ->
+    List.
+
+strip_right(Char, List) ->
+    lists:reverse(strip_left(Char, lists:reverse(List))).
+
+strip(Char, List) ->
+    strip_left(Char, strip_right(Char, List)).
+
 anyany([],_) ->
 	false;
 anyany(_,[]) ->
