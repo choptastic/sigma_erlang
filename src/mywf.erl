@@ -82,10 +82,13 @@ close_lightbox_event() ->
 		#script{script="$(obj('lightbox')).remove()"}
 	]}.
 
-confirm_button({Text,Postback}) ->
-	#button{text=Text,postback=Postback};
-confirm_button({Text,Delegate,Postback}) ->
-	#button{text=Text,postback=Postback,delegate=Delegate}.
+confirm_button_id(N) ->
+    wf:to_atom("confirm_button_" ++ wf:to_list(N)).
+
+confirm_button(N, {Text,Postback}) ->
+	#button{id=confirm_button_id(N), text=Text,postback=Postback};
+confirm_button(N, {Text,Delegate,Postback}) ->
+	#button{id=confirm_button_id(N), text=Text,postback=Postback,delegate=Delegate}.
 
 % buttons is a list of the form: 
 % [{"Button Text",Postback},...] or [{"Button Text",Delegate,Postback},...]
@@ -93,12 +96,13 @@ confirm(Question,Buttons,CancelText,Style) ->
 	Body = [
 		#panel{class=confirm_question,style=Style,body=Question},
 		#panel{class=confirm_buttonrow,body=[
-			[confirm_button(Button) || Button <- Buttons],
+			sigma:nmap(fun(N, Button) ->
+                confirm_button(N, Button)
+            end, Buttons),
 			#button{class=cancel,text=CancelText,actions=close_lightbox_event()}
 		]}
 	],
 	open_lightbox(Body).
-
 
 prompt(Question,DefaultText,Buttons,CancelText) ->
 	ConfirmQuestion = [
@@ -128,7 +132,7 @@ required(_Tag,Value) ->
 							$.scrollTo('.LV_validation_message',400);
 						},100);
 					}",
-			wf:wire(JS),
+            wf:wire(JS ++ wf:f(" /* ~p */", [{_Tag, Value}])),
 			false;
 		_ -> true
 	end.
