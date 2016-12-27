@@ -472,6 +472,15 @@ edit_nth(Fun,N,List) when
 	New = Fun(Cur),	
 	Before ++ [New | After].
 
+edit_pred(_, _, []) ->
+    [];
+edit_pred(EditFun, PredFun, [H|T]) ->
+    NewH = case PredFun(H) of
+        true -> EditFun(H);
+        false -> H
+    end,
+    [NewH | edit_pred(EditFun, PredFun, T)].
+
 set_nth(NewVal,N,List) when
 		is_list(List)
 		andalso is_integer(N)
