@@ -49,6 +49,20 @@ random_list_item(L) ->
 	Index = random(1,length(L)),
 	lists:nth(Index,L).
 
+random_sample(List, SampleSize) when SampleSize >= length(List) ->
+	List;
+random_sample(List, SampleSize) ->
+	random_sample(List, SampleSize, []).
+
+random_sample(_List, 0, Acc) ->
+	Acc;
+random_sample(List, SampleSize, Acc) ->
+	NewItem = random_list_item(List),
+	case lists:member(NewItem, Acc) of
+		true ->	random_sample(List, SampleSize, Acc);
+		false -> random_sample(List, SampleSize - 1, [NewItem | Acc])
+	end.
+	
 
 re(Subject,RE) ->
 	re:run(Subject,RE,[{capture,all_but_first,list}]).
@@ -150,11 +164,11 @@ do_f(Parent, F, I) ->
 	Parent ! {self(), (catch F(I))}. 
 
 unixtime() ->
-	{MegaSec,Sec,_Micro} = now(),
+	{MegaSec,Sec,_Micro} = os:timestamp(),
 	MegaSec*1000000 + Sec.
 
 unixtime_micro() ->
-	{MegaSec,Sec,MicroSec} = now(),
+	{MegaSec,Sec,MicroSec} = os:timestamp(),
 	MegaSec*1000000 + Sec + MicroSec/1000000.
 
 unixtime_to_date(T) ->
@@ -267,8 +281,19 @@ ceiling(X) ->
 trim(undefined) ->
 	"";
 trim(X) -> 
-	X1 = re:replace(X,"^[\r\n\s]+","",[{return,list}]),
-	re:replace(X1,"[\r\n\s]+$","",[{return,list}]).
+	X1 = re:replace(X,"^[\r\n\s]+","",[{return,binary}, unicode]),
+	re:replace(X1,"[\r\n\s]+$","",[{return,list}, unicode]).
+
+strip_left(Char, [Char | Rest]) ->
+    strip_left(Char, Rest);
+strip_left(_Char, List) ->
+    List.
+
+strip_right(Char, List) ->
+    lists:reverse(strip_left(Char, lists:reverse(List))).
+
+strip(Char, List) ->
+    strip_left(Char, strip_right(Char, List)).
 
 anyany([],_) ->
 	false;
@@ -613,3 +638,21 @@ safe_binary_to_term(B, Default) ->
 
 safe_binary_to_term(B) ->
 	safe_binary_to_term(B, undefined).
+
+levenshtein(A, B) ->
+    string_metrics:levenshtein(string:to_lower(wf:to_list(A)),string:to_lower(wf:to_list(B))).
+
+sort_levenshtein(Base, Strings) ->
+    Distances = [{levenshtein(Base, S), S} || S <- Strings],
+    Sorted = lists:sort(fun({D1,_}, {D2,_}) -> D1 =< D2 end, Distances),
+    [S || {_, S} <- Sorted].
+
+boolize(1) -> true;
+boolize("1") -> true;
+boolize(true) -> true;
+boolize("on") -> true;
+boolize(_) -> false.
+
+unboolize(true) -> 1;
+unboolize(false) -> 0;
+unboolize(Other) -> unboolize(boolize(Other)).
