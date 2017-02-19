@@ -310,6 +310,14 @@ range(Start, End, List) ->
 	{Target, _} = lists:split(End - Start + 1, Remainder),
 	Target.
 
+split3(List) ->
+    TotalLen = length(List),
+    MaxLen = round(TotalLen/3),
+    L1 = lists:sublist(List, MaxLen),
+    L2 = lists:sublist(List, MaxLen+1, MaxLen),
+    L3 = lists:sublist(List, MaxLen*2+1, TotalLen),
+    {L1, L2, L3}.
+
 safe_nth(Num,List,Default) when Num > length(List) ->
 	Default;
 safe_nth(Num,List,_Default) ->
