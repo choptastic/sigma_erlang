@@ -655,6 +655,9 @@ sort_levenshtein(Base, Strings) ->
     Sorted = lists:sort(fun({D1,_}, {D2,_}) -> D1 =< D2 end, Distances),
     [S || {_, S} <- Sorted].
 
+best_levenshtein(Base, Strings) ->
+    hd(sort_levenshtein(Base, Strings)).
+
 boolize(1) -> true;
 boolize("1") -> true;
 boolize(true) -> true;
@@ -664,6 +667,3 @@ boolize(_) -> false.
 unboolize(true) -> 1;
 unboolize(false) -> 0;
 unboolize(Other) -> unboolize(boolize(Other)).
-
-levenshtein(S1, S2) ->
-    string_metrics:levenshtein(S1, S2).
