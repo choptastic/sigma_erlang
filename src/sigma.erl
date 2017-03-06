@@ -664,3 +664,6 @@ boolize(_) -> false.
 unboolize(true) -> 1;
 unboolize(false) -> 0;
 unboolize(Other) -> unboolize(boolize(Other)).
+
+levenshtein(S1, S2) ->
+    string_metrics:levenshtein(S1, S2).
