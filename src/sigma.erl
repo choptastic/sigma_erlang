@@ -658,6 +658,9 @@ sort_levenshtein(Base, Strings) ->
 best_levenshtein(Base, Strings) ->
     hd(sort_levenshtein(Base, Strings)).
 
+intersection(A, B) when is_list(A), is_list(B) ->
+    [X || X <- A, lists:member(X, B)].
+
 boolize(1) -> true;
 boolize("1") -> true;
 boolize(true) -> true;
