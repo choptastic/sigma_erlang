@@ -670,3 +670,11 @@ boolize(_) -> false.
 unboolize(true) -> 1;
 unboolize(false) -> 0;
 unboolize(Other) -> unboolize(boolize(Other)).
+
+title_case(String) ->
+    Tokens = string:tokens(String, " "),
+    Updated = [title_case_inner(T) || T <- Tokens],
+    string:join(Updated, " ").
+
+title_case_inner([FirstLetter|Rest]) ->
+    string:to_upper([FirstLetter]) ++ string:to_lower(Rest).
