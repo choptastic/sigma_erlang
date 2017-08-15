@@ -678,3 +678,24 @@ title_case(String) ->
 
 title_case_inner([FirstLetter|Rest]) ->
     string:to_upper([FirstLetter]) ++ string:to_lower(Rest).
+
+format_phone(String) when is_integer(String) ->
+    format_phone(integer_to_list(String));
+format_phone(String) ->
+    Filtered = re:replace(String, "[^0-9]", "", [{return, list}, global]),
+    format_phone_inner(Filtered).
+
+format_phone_inner([$1 | Rest]) when length(Rest)==10 ->
+    format_phone_inner(Rest);
+format_phone_inner([A,B,C, D,E,F, G,H,I,J]) ->
+    [$(, A,B,C, $), $\s, D,E,F, $-, G,H,I,J];
+format_phone_inner([D,E,F, G,H,I,J]) ->
+    [D,E,F, $-, G,H,I,J];
+format_phone_inner(Other) ->
+    {invalid, Other}.
+
+safe_format_phone(String) ->
+    case format_phone(String) of
+        {invalid, _X} -> String;
+        Ph -> Ph
+    end.
