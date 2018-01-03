@@ -310,6 +310,14 @@ range(Start, End, List) ->
 	{Target, _} = lists:split(End - Start + 1, Remainder),
 	Target.
 
+split3(List) ->
+    TotalLen = length(List),
+    MaxLen = round(TotalLen/3),
+    L1 = lists:sublist(List, MaxLen),
+    L2 = lists:sublist(List, MaxLen+1, MaxLen),
+    L3 = lists:sublist(List, MaxLen*2+1, TotalLen),
+    {L1, L2, L3}.
+
 safe_nth(Num,List,Default) when Num > length(List) ->
 	Default;
 safe_nth(Num,List,_Default) ->
@@ -497,6 +505,15 @@ edit_nth(Fun,N,List) when
 	New = Fun(Cur),	
 	Before ++ [New | After].
 
+edit_pred(_, _, []) ->
+    [];
+edit_pred(EditFun, PredFun, [H|T]) ->
+    NewH = case PredFun(H) of
+        true -> EditFun(H);
+        false -> H
+    end,
+    [NewH | edit_pred(EditFun, PredFun, T)].
+
 set_nth(NewVal,N,List) when
 		is_list(List)
 		andalso is_integer(N)
@@ -638,6 +655,12 @@ sort_levenshtein(Base, Strings) ->
     Sorted = lists:sort(fun({D1,_}, {D2,_}) -> D1 =< D2 end, Distances),
     [S || {_, S} <- Sorted].
 
+best_levenshtein(Base, Strings) ->
+    hd(sort_levenshtein(Base, Strings)).
+
+intersection(A, B) when is_list(A), is_list(B) ->
+    [X || X <- A, lists:member(X, B)].
+
 boolize(1) -> true;
 boolize("1") -> true;
 boolize(true) -> true;
@@ -647,3 +670,32 @@ boolize(_) -> false.
 unboolize(true) -> 1;
 unboolize(false) -> 0;
 unboolize(Other) -> unboolize(boolize(Other)).
+
+title_case(String) ->
+    Tokens = string:tokens(String, " "),
+    Updated = [title_case_inner(T) || T <- Tokens],
+    string:join(Updated, " ").
+
+title_case_inner([FirstLetter|Rest]) ->
+    string:to_upper([FirstLetter]) ++ string:to_lower(Rest).
+
+format_phone(String) when is_integer(String) ->
+    format_phone(integer_to_list(String));
+format_phone(String) ->
+    Filtered = re:replace(String, "[^0-9]", "", [{return, list}, global]),
+    format_phone_inner(Filtered).
+
+format_phone_inner([$1 | Rest]) when length(Rest)==10 ->
+    format_phone_inner(Rest);
+format_phone_inner([A,B,C, D,E,F, G,H,I,J]) ->
+    [$(, A,B,C, $), $\s, D,E,F, $-, G,H,I,J];
+format_phone_inner([D,E,F, G,H,I,J]) ->
+    [D,E,F, $-, G,H,I,J];
+format_phone_inner(Other) ->
+    {invalid, Other}.
+
+safe_format_phone(String) ->
+    case format_phone(String) of
+        {invalid, _X} -> String;
+        Ph -> Ph
+    end.
