@@ -122,21 +122,43 @@ confirm(Question, Buttons, CancelText) ->
 confirm(Question,Buttons) ->
 	confirm(Question,Buttons,"Cancel").
 
+scroll_to_validation() ->
+    JS = "	if(typeof scrolltimer == 'undefined')
+            {
+                scrolltimer=setTimeout(function() {
+                    scrolltimer = undefined;
+                    $.scrollTo('.LV_validation_message',400);
+                },100);
+            }",
+    wf:defer(JS).
+
 required(_Tag,Value) ->
 	case sigma:trim(Value) of
 		"" -> 
-			JS = "	if(typeof scrolltimer == 'undefined')
-					{
-						scrolltimer=setTimeout(function() {
-							scrolltimer = undefined;
-							$.scrollTo('.LV_validation_message',400);
-						},100);
-					}",
-            wf:wire(JS ++ wf:f(" /* ~p */", [{_Tag, Value}])),
+            scroll_to_validation(),
 			false;
 		_ -> true
 	end.
 
+is_valid_date(_Tag, Value) ->
+    try qdate:to_unixtime(Value) of
+        0 ->
+            scroll_to_validation(),
+            false;
+        _ ->
+            true
+    catch _:_ ->
+        scroll_to_validation(),
+        false
+    end.
+
+is_email(Tag, Value) ->
+    case validator_is_email:validate(Tag, Value) of
+        true -> true;
+        false ->
+            scroll_to_validation(),
+            false
+    end.
 
 q_int(F) ->
 	try wf:to_integer(wf:q(F)) of
