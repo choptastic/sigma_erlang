@@ -140,7 +140,11 @@ required(_Tag,Value) ->
 		_ -> true
 	end.
 
+is_valid_date(_Tag, "") ->
+    % Allow blanks
+    true;
 is_valid_date(_Tag, Value) ->
+    wf:info("Checking Date: ~p", [Value]),
     try qdate:to_unixtime(Value) of
         0 ->
             scroll_to_validation(),
