@@ -255,6 +255,14 @@ find_duplicates([H | Rest],Found) ->
 find_duplicates(List) ->
 	find_duplicates(List,[]).
 
+has_duplicates([]) ->
+    false;
+has_duplicates([H|T]) ->
+    case lists:member(H, T) of
+        true -> true;
+        false -> has_duplicates(T)
+    end.
+
 file_exists(F) ->
 	{error,enoent} /= file:read_file_info(F).
 
@@ -342,6 +350,7 @@ nfoldl(Fun, Init, List) when is_function(Fun,3) ->
 
 safe_to_integer(S) when is_integer(S) -> S;
 safe_to_integer(S) when is_float(S) -> round(S);
+safe_to_integer(S) when is_binary(S) -> safe_to_integer(binary_to_list(S));
 safe_to_integer(S) when is_list(S) ->
 	try wf:to_integer(S) of
 		Int -> Int
