@@ -351,7 +351,7 @@ nfoldl(Fun, Init, List) when is_function(Fun,3) ->
 safe_to_integer(S) when is_integer(S) -> S;
 safe_to_integer(S) when is_float(S) -> round(S);
 safe_to_integer(S) when is_binary(S) -> safe_to_integer(binary_to_list(S));
-safe_to_integer(S) when is_list(S) ->
+safe_to_integer(S) ->
 	try wf:to_integer(S) of
 		Int -> Int
 	catch _:_ -> 0
