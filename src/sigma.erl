@@ -326,6 +326,20 @@ split3(List) ->
     L3 = lists:sublist(List, MaxLen*2+1, TotalLen),
     {L1, L2, L3}.
 
+split_n(N, List) ->
+	Init = lists:duplicate(N, []),
+	Grouped = nfoldl(fun(I, X, Acc) ->
+		ListNum = case I rem N of
+			0 -> N;
+			LN -> LN
+		end,
+		IList = lists:nth(ListNum, Acc),
+		NewIList = [X | IList],
+		NewAcc = set_nth(NewIList, ListNum, Acc)
+	end, Init, List),
+	[lists:reverse(L) || L <- Grouped].
+		
+
 safe_nth(Num,List,Default) when Num > length(List) ->
 	Default;
 safe_nth(Num,List,_Default) ->

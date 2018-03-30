@@ -66,7 +66,11 @@ open_lightbox(Body) ->
 	close_lightbox(),
 	wf:insert_top("body",#lightbox{id=lightbox,body=[
 		#panel{class=lightbox_form,body=Body}
-	]}).
+	]}),
+    wf:defer("if($('.lightbox').css('position')=='absolute') {
+                var t = $(document).scrollTop() + 'px';
+                $('.lightbox').css('top', t);
+             }").
 
 
 delete_link(Postback) ->
