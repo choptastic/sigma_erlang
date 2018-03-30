@@ -348,6 +348,16 @@ nfoldl(Fun, Init, List) when is_function(Fun,3) ->
 		Fun(N, V, Acc)
 	end, Init, lists:zip(lists:seq(1,Len),List)).
 
+map_prev(Fun, List) when is_function(Fun, 2) ->
+    map_prev(Fun, List, undefined).
+
+map_prev(_, [], _) ->
+    [];
+map_prev(Fun, [H|T], Prev) when is_function(Fun, 2) ->
+    Result = Fun(H, Prev),
+    [Result | map_prev(Fun, T, H)].
+        
+
 safe_to_integer(S) when is_integer(S) -> S;
 safe_to_integer(S) when is_float(S) -> round(S);
 safe_to_integer(S) when is_binary(S) -> safe_to_integer(binary_to_list(S));
