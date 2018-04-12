@@ -708,3 +708,11 @@ safe_format_phone(String) ->
         {invalid, _X} -> String;
         Ph -> Ph
     end.
+
+add_proplists(A, B) ->
+    %% Goes through each element in B, searches A for the related value, and adds to it as necessary, replacing the old value.
+    lists:foldl(fun({BKey, BVal}, NewA) ->
+        OldAVal = pl:get(NewA, BKey, 0),
+        NewAVal = OldAVal + BVal,
+        pl:set(NewA, BKey, NewAVal)
+    end, A, B).
