@@ -326,6 +326,20 @@ split3(List) ->
     L3 = lists:sublist(List, MaxLen*2+1, TotalLen),
     {L1, L2, L3}.
 
+split_n(N, List) ->
+	Init = lists:duplicate(N, []),
+	Grouped = nfoldl(fun(I, X, Acc) ->
+		ListNum = case I rem N of
+			0 -> N;
+			LN -> LN
+		end,
+		IList = lists:nth(ListNum, Acc),
+		NewIList = [X | IList],
+		NewAcc = set_nth(NewIList, ListNum, Acc)
+	end, Init, List),
+	[lists:reverse(L) || L <- Grouped].
+		
+
 safe_nth(Num,List,Default) when Num > length(List) ->
 	Default;
 safe_nth(Num,List,_Default) ->
@@ -347,6 +361,16 @@ nfoldl(Fun, Init, List) when is_function(Fun,3) ->
 	lists:foldl(fun({N,V},Acc) ->
 		Fun(N, V, Acc)
 	end, Init, lists:zip(lists:seq(1,Len),List)).
+
+map_prev(Fun, List) when is_function(Fun, 2) ->
+    map_prev(Fun, List, undefined).
+
+map_prev(_, [], _) ->
+    [];
+map_prev(Fun, [H|T], Prev) when is_function(Fun, 2) ->
+    Result = Fun(H, Prev),
+    [Result | map_prev(Fun, T, H)].
+        
 
 safe_to_integer(S) when is_integer(S) -> S;
 safe_to_integer(S) when is_float(S) -> round(S);
