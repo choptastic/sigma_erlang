@@ -168,6 +168,12 @@ is_email(Tag, Value) ->
             false
     end.
 
+is_email_blank_okay(_Tag, "") ->
+    true;
+is_email_blank_okay(Tag, Value) ->
+    is_email(Tag, Value).
+
+
 q_int(F) ->
 	try wf:to_integer(wf:q(F)) of
 		V -> V
