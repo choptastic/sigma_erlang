@@ -355,6 +355,12 @@ safe_nth(Num,List) ->
 	safe_nth(Num,List,undefined).
 
 
+safe_split(Num, List) when Num =< length(List) ->
+	lists:split(Num, List);
+safe_split(_Num, List) when is_list(List) ->
+	{List, []}.
+
+
 %% Fun must be arity 2. first arg = Index (1...X), second arg=Value
 nmap(Fun,List) when is_function(Fun,2) ->
 	Len = length(List),
