@@ -4,6 +4,12 @@
 
 %% General purpose functions for Sigma Star Systems stuff
 
+maybe_apply(Mod, Fun, Args) ->
+    case erlang:function_exported(Mod, Fun, length(Args)) of
+        true -> erlang:apply(Mod, Fun, Args);
+        false -> {error, {function_not_exported, {Mod, Fun, length(Args)}}}
+    end.
+
 %% random number between Min and Max
 random(Min,Min) ->
 	Min;
