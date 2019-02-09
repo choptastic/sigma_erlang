@@ -1,5 +1,6 @@
 -module(sigma).
 -compile(export_all).
+-compile({no_auto_import, [floor/1]}).
 
 
 %% General purpose functions for Sigma Star Systems stuff
@@ -341,7 +342,7 @@ split_n(N, List) ->
 		end,
 		IList = lists:nth(ListNum, Acc),
 		NewIList = [X | IList],
-		NewAcc = set_nth(NewIList, ListNum, Acc)
+		_NewAcc = set_nth(NewIList, ListNum, Acc)
 	end, Init, List),
 	[lists:reverse(L) || L <- Grouped].
 		
@@ -354,6 +355,20 @@ safe_nth(Num,List,_Default) ->
 safe_nth(Num,List) ->
 	safe_nth(Num,List,undefined).
 
+set_nth(NewVal,N,List) when
+		is_list(List)
+		andalso is_integer(N)
+		andalso N =< length(List) ->
+	{Before, [_Old | After]} = lists:split(N-1,List),
+	Before ++ [NewVal | After].
+
+
+safe_set_nth(NewVal, N, List) when length(List) >= N ->
+    set_nth(NewVal, N, List);
+safe_set_nth(NewVal, N, List) when length(List) < N ->
+    BlanksToAdd = N - length(List) - 1,
+    List ++ lists:duplicate(BlanksToAdd, undefined) ++ [NewVal].
+    
 
 safe_split(Num, List) when Num =< length(List) ->
 	lists:split(Num, List);
@@ -558,13 +573,6 @@ edit_pred(EditFun, PredFun, [H|T]) ->
         false -> H
     end,
     [NewH | edit_pred(EditFun, PredFun, T)].
-
-set_nth(NewVal,N,List) when
-		is_list(List)
-		andalso is_integer(N)
-		andalso N =< length(List) ->
-	{Before, [_Old | After]} = lists:split(N-1,List),
-	Before ++ [NewVal | After].
 
 get_index(Val, List) ->
 	get_index(Val, List, 1).
