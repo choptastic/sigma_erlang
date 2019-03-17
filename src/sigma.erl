@@ -17,7 +17,8 @@ random(Min,Min) ->
 random(Min,Max) when Min > Max ->
 	random(Max,Min);
 random(Min,Max) ->
-	crypto:rand_uniform(Min,Max+1).
+    rand:uniform(Max-Min+1)+Min-1.
+
 
 random_chance(0) ->
 	false;
@@ -476,7 +477,7 @@ break_into_parts_helper(List,PartLen) ->
  
 randomize_list(L) ->
 	Num = length(L),
-	Rands = [crypto:rand_uniform(1,10000) || _ <- lists:seq(1,Num)],
+	Rands = [random(1,10000) || _ <- lists:seq(1,Num)],
 	Zipped = lists:zip(L,Rands),
 	Shuffled = lists:sort(fun({_,A},{_,B}) ->
 		A < B
