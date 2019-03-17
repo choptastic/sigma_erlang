@@ -27,7 +27,11 @@ random_chance(Ratio) when is_float(Ratio), Ratio>=0, Ratio=<1  ->
 random_chance(Percent) when is_integer(Percent),Percent>=0, Percent=<100 ->
 	random(0,99) < Percent.
 
-
+add_unique(X, List) ->
+    case lists:member(X, List) of
+        true -> List;
+        false -> [X | List]
+    end.
 
 %% Random string with length between Min and Max (inclusive)
 random_string(Min,Max) ->
