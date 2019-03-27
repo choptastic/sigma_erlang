@@ -455,16 +455,15 @@ pivot(List) ->
 	zipn(Extended).
 
 deduplicate(List) ->
-	deduplicate(List, 0).
-
-deduplicate([undefined | T], Last) ->
-	deduplicate(T, Last);
-deduplicate([LastPlace | T], LastPlace) ->
-	deduplicate(T, LastPlace);
-deduplicate([ThisPlace | T], _) ->
-	[ThisPlace | deduplicate(T, ThisPlace)];
-deduplicate([], _) ->
-	[].
+    lists:foldl(fun
+        (undefined, Acc) ->
+            Acc;
+        (X, Acc) ->
+            case lists:member(X, Acc) of
+                true -> Acc;
+                false -> [X | Acc]
+            end
+    end, [], List).
 
 break_into_parts_helper(List,PartLen) ->
 	Start = lists:sublist(List,PartLen),
