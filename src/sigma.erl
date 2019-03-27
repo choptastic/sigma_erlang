@@ -455,7 +455,7 @@ pivot(List) ->
 	zipn(Extended).
 
 deduplicate(List) ->
-    lists:foldl(fun
+    Deduped = lists:foldl(fun
         (undefined, Acc) ->
             Acc;
         (X, Acc) ->
@@ -463,7 +463,8 @@ deduplicate(List) ->
                 true -> Acc;
                 false -> [X | Acc]
             end
-    end, [], List).
+    end, [], List),
+    lists:reverse(Deduped).
 
 break_into_parts_helper(List,PartLen) ->
 	Start = lists:sublist(List,PartLen),
