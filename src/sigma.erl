@@ -404,13 +404,16 @@ map_prev(Fun, [H|T], Prev) when is_function(Fun, 2) ->
     [Result | map_prev(Fun, T, H)].
         
 
-safe_to_integer(S) when is_integer(S) -> S;
-safe_to_integer(S) when is_float(S) -> round(S);
-safe_to_integer(S) when is_binary(S) -> safe_to_integer(binary_to_list(S));
 safe_to_integer(S) ->
+    safe_to_integer(S, undefined).
+
+safe_to_integer(S, _) when is_integer(S) -> S;
+safe_to_integer(S, _) when is_float(S) -> round(S);
+safe_to_integer(S, _) when is_binary(S) -> safe_to_integer(binary_to_list(S));
+safe_to_integer(S, Default) ->
 	try wf:to_integer(S) of
 		Int -> Int
-	catch _:_ -> 0
+	catch _:_ -> Default
 	end.
 
 safe_to_float(S) when is_integer(S) ->
