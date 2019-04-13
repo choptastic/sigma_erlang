@@ -405,7 +405,7 @@ map_prev(Fun, [H|T], Prev) when is_function(Fun, 2) ->
         
 
 safe_to_integer(S) ->
-    safe_to_integer(S, undefined).
+    safe_to_integer(S, 0).
 
 safe_to_integer(S, _) when is_integer(S) -> S;
 safe_to_integer(S, _) when is_float(S) -> round(S);
