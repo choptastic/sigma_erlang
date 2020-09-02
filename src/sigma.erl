@@ -725,6 +725,7 @@ intersection(A, B) when is_list(A), is_list(B) ->
 boolize(1) -> true;
 boolize("1") -> true;
 boolize(true) -> true;
+boolize("true") -> true;
 boolize("on") -> true;
 boolize(_) -> false.
 
