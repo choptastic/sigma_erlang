@@ -769,3 +769,42 @@ add_proplists(A, B) ->
         NewAVal = OldAVal + BVal,
         pl:set(NewA, BKey, NewAVal)
     end, A, B).
+
+
+%% Following hexlify/1 function lifted from Steve Vinoski's erlsha2 program
+%% https://github.com/vinoski/erlsha2
+
+hexlify(Binary) when is_binary(Binary) ->
+    lists:flatten([io_lib:format("~2.16.0B", [B]) ||
+                      B <- binary_to_list(Binary)]).
+
+unhexlify(X) ->
+    unhexlify_(string:to_upper(wf:to_list(X))).
+
+unhexlify_([]) -> [];
+unhexlify_([A0]) ->
+    A = htoi(A0),
+    [A*16];
+unhexlify_([A0,B0|Rest]) ->
+    A = htoi(A0),
+    B = htoi(B0),
+    [A*16+B | unhexlify_(Rest)].
+
+htoi($0) -> 0;
+htoi($1) -> 1;
+htoi($2) -> 2;
+htoi($3) -> 3;
+htoi($4) -> 4;
+htoi($5) -> 5;
+htoi($6) -> 6;
+htoi($7) -> 7;
+htoi($8) -> 8;
+htoi($9) -> 9;
+htoi($A) -> 10;
+htoi($B) -> 11;
+htoi($C) -> 12;
+htoi($D) -> 13;
+htoi($E) -> 14;
+htoi($F) -> 15.
+
+
