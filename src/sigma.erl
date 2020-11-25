@@ -770,6 +770,13 @@ add_proplists(A, B) ->
         pl:set(NewA, BKey, NewAVal)
     end, A, B).
 
+find_first(_, []) -> undefined;
+find_first(Fun, [H|T]) ->
+    case Fun(H) of
+        true -> H;
+        {true, Val} -> Val;
+        false -> find_first(Fun, T)
+    end.
 
 %% Following hexlify/1 function lifted from Steve Vinoski's erlsha2 program
 %% https://github.com/vinoski/erlsha2
