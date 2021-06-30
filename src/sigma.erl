@@ -403,10 +403,11 @@ map_prev(Fun, [H|T], Prev) when is_function(Fun, 2) ->
     Result = Fun(H, Prev),
     [Result | map_prev(Fun, T, H)].
         
-
+-spec safe_to_integer(term()) -> integer().
 safe_to_integer(S) ->
     safe_to_integer(S, 0).
 
+-spec safe_to_integer(term(), term()) -> term().
 safe_to_integer(S, _) when is_integer(S) -> S;
 safe_to_integer(S, _) when is_float(S) -> round(S);
 safe_to_integer(S, _) when is_binary(S) -> safe_to_integer(binary_to_list(S));
