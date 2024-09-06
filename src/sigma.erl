@@ -550,9 +550,9 @@ group_on_head(List) ->
 group_on_pred(List, Pred) ->
 	Reversed = lists:foldl(fun(X, Acc) ->
 		Key = Pred(X),
-		KeyList = pl:get(Acc, Key, []),
+		KeyList = ds:get(Acc, Key, []),
 		NewKeyList = [X | KeyList],
-		pl:set(Acc, Key, NewKeyList)
+		ds:set(Acc, Key, NewKeyList)
 	end, [], List),
 	[{Key, lists:reverse(L)} || {Key,L} <- Reversed].
 
@@ -766,9 +766,9 @@ safe_format_phone(String) ->
 add_proplists(A, B) ->
     %% Goes through each element in B, searches A for the related value, and adds to it as necessary, replacing the old value.
     lists:foldl(fun({BKey, BVal}, NewA) ->
-        OldAVal = pl:get(NewA, BKey, 0),
+        OldAVal = ds:get(NewA, BKey, 0),
         NewAVal = OldAVal + BVal,
-        pl:set(NewA, BKey, NewAVal)
+        ds:set(NewA, BKey, NewAVal)
     end, A, B).
 
 find_first(_, []) -> undefined;
